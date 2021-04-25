@@ -17,42 +17,76 @@
 // 5. Display each key-value pair from the metadata JSON object somewhere on the page.
 // 6. Update all of the plots any time that a new sample is selected.
 
-// Initializes the page with a default plot
-function init() {
-  data = [{
-    x: [1, 2, 3, 4, 5],
-    y: [1, 2, 4, 8, 16] }];
 
-  Plotly.newPlot("plot", data);
-}
+// Populate the dropdown with names
+var dropDown = d3.select("#selDataset");
 
-// Call updatePlotly() when a change takes place to the DOM
-d3.selectAll("#selDataset").on("change", updatePlotly);
+d3.json("samples.json").then((samplesData) => {
+    
+    var names = samplesData.names.map(name_id => name_id);
+    first_ID = names[0];
 
-// This function is called when a dropdown menu item is selected
-function updatePlotly() {
-  // Use D3 to select the dropdown menu
-  var dropdownMenu = d3.select("#selDataset");
-  // Assign the value of the dropdown menu option to a variable
-  var dataset = dropdownMenu.property("value");
+    names.forEach(function(name) {
+       var dropDownOption = dropDown.append("option");
 
-  // Initialize x and y arrays
-  var x = [];
-  var y = [];
+        dropDownOption.attr("value", name)
+        .text(name);
+      });
+});
 
-  if (dataset === 'dataset1') {
-    x = [1, 2, 3, 4, 5];
-    y = [1, 2, 4, 8, 16];
-  }
 
-  else if (dataset === 'dataset2') {
-    x = [10, 20, 30, 40, 50];
-    y = [1, 10, 100, 1000, 10000];
-  }
+function optionChanged(id){
+    
 
-  // Note the extra brackets around 'x' and 'y'
-  Plotly.restyle("plot", "x", [x]);
-  Plotly.restyle("plot", "y", [y]);
-}
+d3.json("samples.json").then((samplesData) => {
+var panel_body = d3.select(".panel-body");
+Object.entries(samplesData.metadata).forEach(function([KEY, VALUE]) {
+  if (VALUE.id == id){
+      panel_body.html("ID: " + VALUE.id + "<br>Ethnicity: " + VALUE.ethnicity + "<br>Gender: " + VALUE.gender +
+                    "<br>Age: " + VALUE.age + "<br>Location: " + VALUE.location + "<br>BBtype: " + VALUE.bbtype + "<br>WFreq: " + VALUE.wfreq);
+      };
+ });
 
-init();
+
+/*
+      
+        var trace1 = {
+            type: 'bar',
+            x: ,
+            y: ,
+            text: ,
+            orientation: 'h'
+        };
+        
+        var bar_data = [trace1]
+        
+        var bar_layout = {
+            title: 'Top 10 OTUs'
+        }
+        Plotly.newPlot('bar', bar_data, bar_layout);
+
+
+        
+//bubble stuff
+   var trace2 = {
+     x: otu_id ,
+     y: sample_value,
+     mode: 'markers',
+     text: otu_labels,
+     marker: {
+     size: sample_values,
+     color: otu_ids,
+       }
+   };
+
+   var bubblelayout = {
+     title: `Bubble Chart`
+   }
+
+   var bubbledata = [trace2]
+   Plotly.newPlot('bubble', bubbledata, bubblelayout);
+
+*/
+    });
+};	
+optionChanged(940);
